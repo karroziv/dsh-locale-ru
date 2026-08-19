@@ -1,4 +1,4 @@
-# dsh-locale-ru — русский языковой пакет для интерфейса DSH Web
+# dsh-locale-ru — русский языковой пакет для интерфейса DeepSeek Harness Web
 
 Русский · [English](README.en.md)
 
