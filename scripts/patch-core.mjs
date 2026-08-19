@@ -129,6 +129,11 @@ const REPLACEMENTS = [
 \t\tfunction optionLabel(option) {
 \t\t\treturn option.value === FULL_ACCESS ? "Полный доступ" : displayName(option.name);
 \t\t}`],
+
+  // ── session-log export: hardcoded download button label ─────────────────
+  ['dsh-session-log-export', 'lib/client.js',
+    'children: [(0, react_jsx_runtime.jsx)("span", { children: "Session log" }), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDownloadOutline16, { size: 12 })]',
+    'children: [(0, react_jsx_runtime.jsx)("span", { children: "Журнал сеанса" }), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDownloadOutline16, { size: 12 })]'],
 ]
 
 const here = dirname(fileURLToPath(import.meta.url))

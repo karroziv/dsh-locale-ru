@@ -56,7 +56,15 @@ const PKG_NS = {
 
 const out = {} // ns -> { zh: {}, en: {} }
 
-for (const f of globSync(join(repo, 'packages/client/*/src/client/locales.ts')).sort()) {
+// Client packages outside packages/client/ (session export, cordis panel, …)
+// also own locale namespaces; scan them with the same parsing path.
+const LOCALES_GLOBS = [
+  join(repo, 'packages/client/*/src/client/locales.ts'),
+  join(repo, 'packages/session-query/*/src/client/locales.ts'),
+  join(repo, 'packages/extensions/*/src/client/locales.ts'),
+]
+
+for (const f of LOCALES_GLOBS.flatMap((g) => globSync(g)).sort()) {
   const pkg = basename(dirname(dirname(dirname(f))))
   const lines = readFileSync(f, 'utf8').split('\n')
   const zh = parseVar(lines, 'zh')
@@ -64,8 +72,13 @@ for (const f of globSync(join(repo, 'packages/client/*/src/client/locales.ts')).
   let ns = PKG_NS[pkg]
   if (!ns) {
     const m = readFileSync(f, 'utf8').match(/`([^`]+)` namespace/)
-    ns = m ? m[1] : pkg
+    if (m) ns = m[1]
   }
+  if (!ns) {
+    const m = readFileSync(f, 'utf8').match(/export const NS = '([^']+)'/)
+    if (m) ns = m[1]
+  }
+  if (!ns) ns = pkg
   out[ns] ??= { zh: {}, en: {} }
   Object.assign(out[ns].zh, zh)
   Object.assign(out[ns].en, en)
