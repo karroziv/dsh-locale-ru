@@ -1,149 +1,115 @@
-# dsh-locale-ru — русский языковой пакет для интерфейса DSH Web
+# dsh-locale-ru — Russian language pack for the DSH web interface
 
-[English](#english) · Русский
-
-Плагин (client bundle) для [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness),
-добавляющий русский язык в веб-интерфейс (`dsh web`): полные словари `ru`
-для всех UI-пространств имён (~650 строк), регистрируемые через
-`ctx.locale.register(ns, 'ru', dict)`.
-
-После установки в интерфейсе появляется выбор **Настройки → Language → «Русский»**;
-если язык браузера русский — интерфейс включается на русском автоматически.
-
-## Установка
-
-> Требование: у вас уже запускается `dsh web` (профиль `web`).
->
-> Пакет устанавливается **напрямую из GitHub** (npm-реестр не используется).
-
-### Способ 1 — из репозитория (git URL, рекомендуется)
-
-```sh
-cd ~/.dsh/profiles/web
-npm install --allow-git all github:karroziv/dsh-locale-ru
-```
-
-Либо добавьте зависимость в `~/.dsh/profiles/web/package.json` вручную
-(флаг `--allow-git all` или строка `allow-git=true` в `.npmrc` нужны только
-для npm 11+, см. ниже):
-
-```json
-"dependencies": { "dsh-locale-ru": "github:karroziv/dsh-locale-ru" }
-```
-
-### Способ 2 — из GitHub Release (тарбол)
-
-```sh
-cd ~/.dsh/profiles/web
-npm install --allow-remote all https://github.com/karroziv/dsh-locale-ru/releases/download/v0.1.0/dsh-locale-ru-0.1.0.tgz
-```
-
-### Общие шаги после установки
-
-```sh
-# 1. Добавить пакет в список бандлов профиля
-#    в ~/.dsh/profiles/web/package.json:
-#      "dsh": { "profile": { "bundles": [
-#        "@deepseek-ai/dsh-base",
-#        "@deepseek-ai/dsh-web-app",
-#        "dsh-locale-ru"
-#      ] } }
-
-# 2. Перезапустить сервер (пересобирается boot-граф и хэши бандлов)
-#    перезапустите dsh web
-```
-
-> **npm 11+**: по умолчанию заблокированы и git-зависимости, и remote-тарболы,
-> и install-скрипты. Флаги `--allow-git all` / `--allow-remote all` включают
-> первые два; для автопатча ядра разрешите install-скрипт
-> (`npm install-scripts approve dsh-locale-ru`) либо примените патч вручную:
-> `node node_modules/dsh-locale-ru/scripts/patch-core.mjs`
->
-> **pnpm**: `pnpm add github:karroziv/dsh-locale-ru`; в pnpm 10+ build-скрипты
-> тоже требуют одобрения (`pnpm approve-builds`).
-
-Postinstall-скрипт пакета автоматически применяет микро-патч ядра
-(`@deepseek-ai/dsh-client-locale`), который регистрирует `ru` в списке языков —
-иначе «Русский» не появится в селекторе и выбор не сохранится. Если на момент
-установки DSH ещё не развёрнут, патч применится с предупреждением; повторите его
-вручную:
-
-```sh
-node node_modules/dsh-locale-ru/scripts/patch-core.mjs
-```
-
-## Как это работает
-
-- Пакет объявляет `dsh.client` (platform `web`) и бандл `./client`; Node-половина
-  `dsh-client-modules` включает его в `window.__DSH_BOOT__` и раздаёт под
-  `/plugins/dsh-locale-ru/client.js?rev=<hash>`.
-- `apply(ctx)` регистрирует словари `ru` для всех namespace нетипизированной
-  формой `ctx.locale.register(ns, 'ru', dict)`.
-- Цепочка поиска ключа при активной локали `ru`:
-  `ns.ru → ns.zh → common.ru → common.zh → сам ключ`.
-
-## Обновление после апгрейда DSH
-
-Апгрейд DSH перезаписывает пакет `@deepseek-ai/dsh-client-locale`, и микро-патч
-ядра нужно применить заново (идемпотентно):
-
-```sh
-node node_modules/dsh-locale-ru/scripts/patch-core.mjs
-```
-
-## Разработка / пересборка переводов
-
-```sh
-# извлечь en/zh словари из исходников deepseek-harness
-node scripts/extract-dicts.mjs /путь/к/deepseek-harness scripts/generated
-# правим scripts/generated/ru-dicts.json
-node scripts/build-bundle.mjs        # пересобрать lib/client.js
-node scripts/verify-dicts.mjs        # сверка покрытия ключей и плейсхолдеров
-```
-
-## Известные ограничения
-
-- Пропуск ключа показывает zh-текст (fallback по дизайну ядра) — сверка
-  `verify-dicts` не даёт пропускам появиться.
-- Микро-патч ядра — ручное вмешательство в установленный npm-пакет; после
-  апгрейда DSH повторяется одной командой (см. выше).
-- Русские плюральные формы (1/2/4/5+) используют двухформенную модель
-  `one`/`other`, как в английских словарях ядра.
-
-## Лицензия
-
-MIT.
-
----
-
-<a name="english"></a>
-## English
+[Русский](README.ru.md) · English
 
 A client-bundle plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 that localizes the `dsh web` interface into Russian: complete `ru` dictionaries
 for every UI namespace (~650 strings), registered via
 `ctx.locale.register(ns, 'ru', dict)`.
 
-**Install (from GitHub, no npm account needed):** inside `~/.dsh/profiles/web` run
+Once installed, the interface gains **Settings → Language → Русский**; if your
+browser language is Russian, the interface switches to Russian automatically.
+
+## Installation
+
+> Prerequisite: you already run `dsh web` (the `web` profile).
+>
+> The package is installed **directly from GitHub** (no npm registry involved).
+
+### Method 1 — from the repository (git URL, recommended)
 
 ```sh
+cd ~/.dsh/profiles/web
 npm install --allow-git all github:karroziv/dsh-locale-ru
-# or from the release tarball:
-# npm install --allow-remote all https://github.com/karroziv/dsh-locale-ru/releases/download/v0.1.0/dsh-locale-ru-0.1.0.tgz
 ```
 
-then add `"dsh-locale-ru"` to `dsh.profile.bundles` in that profile's
-`package.json` and restart `dsh web`. The postinstall script applies the
-required one-line core seam patch (`@deepseek-ai/dsh-client-locale` gains `ru`
-in `LOCALE_IDS` and `LOCALES`); re-run
-`node node_modules/dsh-locale-ru/scripts/patch-core.mjs` after every DSH
-upgrade. On npm 11+, git/remote installs and install scripts are blocked by
-default — pass `--allow-git all` / `--allow-remote all`, approve the script
-(`npm install-scripts approve dsh-locale-ru`), or run the patch command
-manually. pnpm: `pnpm add github:karroziv/dsh-locale-ru` (pnpm 10+ requires
-`pnpm approve-builds`).
+Or add the dependency to `~/.dsh/profiles/web/package.json` manually (the
+`--allow-git all` flag, or `allow-git=true` in `.npmrc`, is only needed on
+npm 11+, see below):
 
-Then pick **Settings → Language → Русский** (or set your browser language to
-Russian and it activates automatically).
+```json
+"dependencies": { "dsh-locale-ru": "github:karroziv/dsh-locale-ru" }
+```
 
-License: MIT.
+### Method 2 — from a GitHub Release (tarball)
+
+```sh
+cd ~/.dsh/profiles/web
+npm install --allow-remote all https://github.com/karroziv/dsh-locale-ru/releases/download/v0.1.0/dsh-locale-ru-0.1.0.tgz
+```
+
+### Common steps after installation
+
+```sh
+# 1. Add the package to the profile's bundle list
+#    in ~/.dsh/profiles/web/package.json:
+#      "dsh": { "profile": { "bundles": [
+#        "@deepseek-ai/dsh-base",
+#        "@deepseek-ai/dsh-web-app",
+#        "dsh-locale-ru"
+#      ] } }
+
+# 2. Restart the server (rebuilds the boot graph and bundle hashes)
+#    restart dsh web
+```
+
+> **npm 11+**: git dependencies, remote tarballs, and install scripts are all
+> blocked by default. The `--allow-git all` / `--allow-remote all` flags enable
+> the first two; for the core auto-patch, approve the install script
+> (`npm install-scripts approve dsh-locale-ru`) or apply the patch manually:
+> `node node_modules/dsh-locale-ru/scripts/patch-core.mjs`
+>
+> **pnpm**: `pnpm add github:karroziv/dsh-locale-ru`; pnpm 10+ also requires
+> approving build scripts (`pnpm approve-builds`).
+
+The package's postinstall script automatically applies the core seam patch
+(`@deepseek-ai/dsh-client-locale`), which registers `ru` in the language list —
+otherwise "Русский" would not appear in the selector and the choice would not
+persist. If DSH is not yet installed at install time, the patch prints a warning
+instead; re-run it manually:
+
+```sh
+node node_modules/dsh-locale-ru/scripts/patch-core.mjs
+```
+
+## How it works
+
+- The package declares `dsh.client` (platform `web`) and the `./client` bundle;
+  the Node half of `dsh-client-modules` includes it in `window.__DSH_BOOT__` and
+  serves it under `/plugins/dsh-locale-ru/client.js?rev=<hash>`.
+- `apply(ctx)` registers the `ru` dictionaries for every namespace via the
+  untyped form `ctx.locale.register(ns, 'ru', dict)`.
+- Key lookup chain when the active locale is `ru`:
+  `ns.ru → ns.zh → common.ru → common.zh → the key itself`.
+
+## Updating after a DSH upgrade
+
+A DSH upgrade rewrites the `@deepseek-ai/dsh-client-locale` package, so the core
+seam patch must be applied again (idempotently):
+
+```sh
+node node_modules/dsh-locale-ru/scripts/patch-core.mjs
+```
+
+## Development / rebuilding translations
+
+```sh
+# extract the en/zh dictionaries from the deepseek-harness sources
+node scripts/extract-dicts.mjs /path/to/deepseek-harness scripts/generated
+# edit scripts/generated/ru-dicts.json
+node scripts/build-bundle.mjs        # rebuild lib/client.js
+node scripts/verify-dicts.mjs        # verify key coverage and placeholders
+```
+
+## Known limitations
+
+- A missing key falls back to zh text (by core design) — the `verify-dicts`
+  check keeps missing keys out.
+- The core seam patch is manual intervention into an installed npm package;
+  after a DSH upgrade it is re-applied with one command (see above).
+- Russian plural forms (1/2/4/5+) use the two-form `one`/`other` model, like the
+  core's English dictionaries.
+
+## License
+
+MIT.

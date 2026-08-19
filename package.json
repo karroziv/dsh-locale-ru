@@ -26,6 +26,7 @@
     "scripts/patch-core.mjs",
     "scripts/postinstall.mjs",
     "README.md",
+    "README.ru.md",
     "LICENSE"
   ],
   "scripts": {
