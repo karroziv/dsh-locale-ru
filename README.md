@@ -13,30 +13,54 @@
 ## Установка
 
 > Требование: у вас уже запускается `dsh web` (профиль `web`).
+>
+> Пакет устанавливается **напрямую из GitHub** (npm-реестр не используется).
+
+### Способ 1 — из репозитория (git URL, рекомендуется)
 
 ```sh
-# 1. Установить пакет в профиль web
 cd ~/.dsh/profiles/web
-npm install dsh-locale-ru        # или: pnpm add dsh-locale-ru
+npm install --allow-git all github:karroziv/dsh-locale-ru
+```
 
-# 2. Добавить пакет в список бандлов профиля
+Либо добавьте зависимость в `~/.dsh/profiles/web/package.json` вручную
+(флаг `--allow-git all` или строка `allow-git=true` в `.npmrc` нужны только
+для npm 11+, см. ниже):
+
+```json
+"dependencies": { "dsh-locale-ru": "github:karroziv/dsh-locale-ru" }
+```
+
+### Способ 2 — из GitHub Release (тарбол)
+
+```sh
+cd ~/.dsh/profiles/web
+npm install --allow-remote all https://github.com/karroziv/dsh-locale-ru/releases/download/v0.1.0/dsh-locale-ru-0.1.0.tgz
+```
+
+### Общие шаги после установки
+
+```sh
+# 1. Добавить пакет в список бандлов профиля
 #    в ~/.dsh/profiles/web/package.json:
 #      "dsh": { "profile": { "bundles": [
 #        "@deepseek-ai/dsh-base",
 #        "@deepseek-ai/dsh-web-app",
 #        "dsh-locale-ru"
 #      ] } }
-#    (или: dsh plugin --profile web add dsh-locale-ru — если команда
-#     поддерживается вашей версией dsh)
 
-# 3. Перезапустить сервер (пересобирается boot-граф и хэши бандлов)
+# 2. Перезапустить сервер (пересобирается boot-граф и хэши бандлов)
 #    перезапустите dsh web
 ```
 
-> **npm 11+**: install-скрипты заблокированы по умолчанию. Если вы видите
-> `install scripts blocked`, разрешите скрипт (`npm install-scripts approve
-> dsh-locale-ru`) либо примените патч вручную:
+> **npm 11+**: по умолчанию заблокированы и git-зависимости, и remote-тарболы,
+> и install-скрипты. Флаги `--allow-git all` / `--allow-remote all` включают
+> первые два; для автопатча ядра разрешите install-скрипт
+> (`npm install-scripts approve dsh-locale-ru`) либо примените патч вручную:
 > `node node_modules/dsh-locale-ru/scripts/patch-core.mjs`
+>
+> **pnpm**: `pnpm add github:karroziv/dsh-locale-ru`; в pnpm 10+ build-скрипты
+> тоже требуют одобрения (`pnpm approve-builds`).
 
 Postinstall-скрипт пакета автоматически применяет микро-патч ядра
 (`@deepseek-ai/dsh-client-locale`), который регистрирует `ru` в списке языков —
@@ -100,14 +124,24 @@ that localizes the `dsh web` interface into Russian: complete `ru` dictionaries
 for every UI namespace (~650 strings), registered via
 `ctx.locale.register(ns, 'ru', dict)`.
 
-**Install:** inside `~/.dsh/profiles/web` run `npm install dsh-locale-ru`, add
-`"dsh-locale-ru"` to `dsh.profile.bundles` in that profile's `package.json`, and
-restart `dsh web`. The postinstall script applies the required one-line core
-seam patch (`@deepseek-ai/dsh-client-locale` gains `ru` in `LOCALE_IDS` and
-`LOCALES`); re-run `node node_modules/dsh-locale-ru/scripts/patch-core.mjs`
-after every DSH upgrade. On npm 11+, install scripts are blocked by default —
-approve them (`npm install-scripts approve dsh-locale-ru`) or run the patch
-command manually.
+**Install (from GitHub, no npm account needed):** inside `~/.dsh/profiles/web` run
+
+```sh
+npm install --allow-git all github:karroziv/dsh-locale-ru
+# or from the release tarball:
+# npm install --allow-remote all https://github.com/karroziv/dsh-locale-ru/releases/download/v0.1.0/dsh-locale-ru-0.1.0.tgz
+```
+
+then add `"dsh-locale-ru"` to `dsh.profile.bundles` in that profile's
+`package.json` and restart `dsh web`. The postinstall script applies the
+required one-line core seam patch (`@deepseek-ai/dsh-client-locale` gains `ru`
+in `LOCALE_IDS` and `LOCALES`); re-run
+`node node_modules/dsh-locale-ru/scripts/patch-core.mjs` after every DSH
+upgrade. On npm 11+, git/remote installs and install scripts are blocked by
+default — pass `--allow-git all` / `--allow-remote all`, approve the script
+(`npm install-scripts approve dsh-locale-ru`), or run the patch command
+manually. pnpm: `pnpm add github:karroziv/dsh-locale-ru` (pnpm 10+ requires
+`pnpm approve-builds`).
 
 Then pick **Settings → Language → Русский** (or set your browser language to
 Russian and it activates automatically).
