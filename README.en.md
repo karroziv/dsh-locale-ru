@@ -1,6 +1,6 @@
 # dsh-locale-ru — Russian language pack for the DSH web interface
 
-[Русский](README.ru.md) · English
+[Русский](README.md) · English
 
 A client-bundle plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 that localizes the `dsh web` interface into Russian: complete `ru` dictionaries
@@ -62,11 +62,19 @@ npm install --allow-remote all https://github.com/karroziv/dsh-locale-ru/release
 > **pnpm**: `pnpm add github:karroziv/dsh-locale-ru`; pnpm 10+ also requires
 > approving build scripts (`pnpm approve-builds`).
 
-The package's postinstall script automatically applies the core seam patch
-(`@deepseek-ai/dsh-client-locale`), which registers `ru` in the language list —
-otherwise "Русский" would not appear in the selector and the choice would not
-persist. If DSH is not yet installed at install time, the patch prints a warning
-instead; re-run it manually:
+The package's postinstall script automatically applies a set of seam patches
+to the installed DSH packages:
+
+- `@deepseek-ai/dsh-client-locale` — registers `ru` in the language list
+  (otherwise "Русский" would not appear in the selector and the choice would
+  not persist);
+- the `/goal`, `/plan`, `/compact`, `/export`, `/feedback`, `/permission`
+  command descriptions — translated to Russian;
+- permission-mode labels (`Рабочая папка`, `Полный доступ`, `Только чтение`)
+  and DeepSeek reasoning-effort names (`Высокий`, `Низкий`, …) — translated.
+
+If DSH is not yet installed at install time, the patches print a warning
+instead; re-run them manually:
 
 ```sh
 node node_modules/dsh-locale-ru/scripts/patch-core.mjs
@@ -84,8 +92,8 @@ node node_modules/dsh-locale-ru/scripts/patch-core.mjs
 
 ## Updating after a DSH upgrade
 
-A DSH upgrade rewrites the `@deepseek-ai/dsh-client-locale` package, so the core
-seam patch must be applied again (idempotently):
+A DSH upgrade rewrites the patched packages, so the seam patches must be
+applied again (idempotently):
 
 ```sh
 node node_modules/dsh-locale-ru/scripts/patch-core.mjs
@@ -105,7 +113,7 @@ node scripts/verify-dicts.mjs        # verify key coverage and placeholders
 
 - A missing key falls back to zh text (by core design) — the `verify-dicts`
   check keeps missing keys out.
-- The core seam patch is manual intervention into an installed npm package;
+- The seam patches are manual intervention into installed npm packages;
   after a DSH upgrade it is re-applied with one command (see above).
 - Russian plural forms (1/2/4/5+) use the two-form `one`/`other` model, like the
   core's English dictionaries.
