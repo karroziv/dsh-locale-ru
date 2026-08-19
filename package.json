@@ -1,0 +1,59 @@
+{
+  "name": "dsh-locale-ru",
+  "version": "0.1.0",
+  "description": "Russian language pack for the DeepSeek Harness (dsh) web interface: full ru dictionaries for every UI namespace",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "deepseek",
+    "locale",
+    "i18n",
+    "russian",
+    "ru",
+    "plugin"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "scripts/patch-core.mjs",
+    "scripts/postinstall.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/postinstall.mjs",
+    "extract": "node scripts/extract-dicts.mjs",
+    "build": "node scripts/build-bundle.mjs",
+    "verify": "node scripts/verify-dicts.mjs",
+    "patch": "node scripts/patch-core.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karroziv/dsh-locale-ru.git"
+  },
+  "homepage": "https://github.com/karroziv/dsh-locale-ru#readme",
+  "bugs": {
+    "url": "https://github.com/karroziv/dsh-locale-ru/issues"
+  }
+}

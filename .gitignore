@@ -1,0 +1,10 @@
+# npm artifacts
+*.tgz
+.npm-cache/
+
+# local tooling
+.gh/
+.gh-config/
+.gh-cache/
+.verify-profile/
+.verify-browser.log
