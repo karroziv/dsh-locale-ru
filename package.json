@@ -25,6 +25,8 @@
     "cordis.patch.yml",
     "scripts/patch-core.mjs",
     "scripts/postinstall.mjs",
+    "scripts/auto-patch.mjs",
+    "scripts/ensure-all.mjs",
     "README.md",
     "README.en.md",
     "LICENSE"
@@ -34,7 +36,8 @@
     "extract": "node scripts/extract-dicts.mjs",
     "build": "node scripts/build-bundle.mjs",
     "verify": "node scripts/verify-dicts.mjs",
-    "patch": "node scripts/patch-core.mjs"
+    "patch": "node scripts/patch-core.mjs",
+    "ensure": "node scripts/ensure-all.mjs"
   },
   "dsh": {
     "bundle": {
