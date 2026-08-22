@@ -118,6 +118,13 @@ node scripts/verify-dicts.mjs        # verify key coverage and placeholders
 - Russian plural forms (1/2/4/5+) use the two-form `one`/`other` model, like the
   core's English dictionaries.
 
+## Related projects
+
+- [imdeniil/dsh-locale-ru](https://github.com/imdeniil/dsh-locale-ru) — an
+  alternative Russian localization for DSH (includes the community plugin
+  market `dsh-community-market` strings and extends the language list at
+  runtime).
+
 ## License
 
 MIT.

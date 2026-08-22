@@ -20,14 +20,20 @@ if (!repo || !outDir) {
   process.exit(1)
 }
 
-/** Parse a `{ 'key': 'value', bareKey: 'value' }` block starting at `start` (the line holding `{`). */
+/** Parse a `{ 'key': 'value', bareKey: 'value', key: CONST_REF, multiLine: ... }` block starting at `start`. */
 function parseDictBlock(lines, start) {
   const dict = {}
   for (const ln of lines.slice(start + 1)) {
     if (ln.trim().startsWith('}')) break
     let m = ln.match(/\s*'([^']+)':\s*'((?:[^'\\]|\\.)*)'/)
     if (!m) m = ln.match(/\s*([A-Za-z0-9_.]+):\s*'((?:[^'\\]|\\.)*)'/)
-    if (m) dict[m[1]] = m[2].replace(/\\'/g, "'").replace(/\\\\/g, '\\')
+    if (!m) {
+      // Reference values (e.g. `welcomeTitle: WELCOME_NOTICE_COPY.en.title,`)
+      // and multi-line strings (`sectionIntro:` followed by `'...' + '...'`):
+      // keep the key so coverage verification sees it, mark the source.
+      m = ln.match(/\s*'?([A-Za-z0-9_.]+)'?:\s*([A-Za-z_][A-Za-z0-9_.]*),?\s*$/) ?? (ln.trim().endsWith(':') ? ln.match(/\s*'?([A-Za-z0-9_.]+)'?:\s*$/) : null)
+    }
+    if (m) dict[m[1]] = m[2] ? m[2].replace(/\\'/g, "'").replace(/\\\\/g, '\\') : 'REF'
   }
   return dict
 }
